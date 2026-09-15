@@ -1,0 +1,131 @@
+* {
+  box-sizing: border-box;
+  font-family: system-ui, -apple-system, sans-serif;
+}
+
+body {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background-color: #f3f4f6;
+  margin: 0;
+  padding: 20px;
+}
+
+.calculator-container {
+  background: #ffffff;
+  padding: 20px;
+  border-radius: 16px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+  width: 100%;
+  max-width: 360px;
+}
+
+.display {
+  background: #111827;
+  color: #ffffff;
+  text-align: right;
+  padding: 16px;
+  border-radius: 8px;
+  margin-bottom: 16px;
+  word-wrap: break-word;
+  word-break: break-all;
+  min-height: 80px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.sub-display {
+  font-size: 14px;
+  color: #9ca3af;
+  min-height: 20px;
+}
+
+.main-display {
+  font-size: 28px;
+  font-weight: bold;
+}
+
+.buttons {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+}
+
+button {
+  padding: 16px;
+  font-size: 18px;
+  font-weight: 600;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  background: #e5e7eb;
+  color: #1f2937;
+  transition: background 0.2s, transform 0.1s;
+}
+
+button:hover {
+  background: #d1d5db;
+}
+
+button:active {
+  transform: scale(0.96);
+}
+
+button.operator {
+  background: #f59e0b;
+  color: white;
+}
+
+button.operator:hover {
+  background: #d97706;
+}
+
+button.clear {
+  background: #ef4444;
+  color: white;
+}
+
+button.clear:hover {
+  background: #dc2626;
+}
+
+button.equal {
+  background: #10b981;
+  color: white;
+  grid-column: span 2;
+}
+
+button.equal:hover {
+  background: #059669;
+}
+
+.history-container {
+  margin-top: 20px;
+  border-top: 1px solid #e5e7eb;
+  padding-top: 12px;
+}
+
+.history-title {
+  font-size: 14px;
+  font-weight: bold;
+  color: #6b7280;
+  margin-bottom: 8px;
+}
+
+.history-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  max-height: 120px;
+  overflow-y: auto;
+  font-size: 14px;
+  color: #374151;
+}
+
+.history-list li {
+  padding: 4px 0;
+  border-bottom: 1px dashed #f3f4f6;
+}

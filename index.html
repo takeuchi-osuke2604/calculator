@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>電卓アプリ</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="calculator-container">
+  <div class="display">
+    <div class="sub-display" id="subDisplay"></div>
+    <div class="main-display" id="mainDisplay">0</div>
+  </div>
+  
+  <div class="buttons">
+    <button class="clear" id="btnClear">C</button>
+    <button class="operator" data-op="/">÷</button>
+    <button class="operator" data-op="*">×</button>
+    <button class="operator" data-op="-">−</button>
+    
+    <button class="num">7</button>
+    <button class="num">8</button>
+    <button class="num">9</button>
+    <button class="operator" data-op="+">＋</button>
+    
+    <button class="num">4</button>
+    <button class="num">5</button>
+    <button class="num">6</button>
+    <button id="btnDecimal">.</button>
+    
+    <button class="num">1</button>
+    <button class="num">2</button>
+    <button class="num">3</button>
+    <button class="num">0</button>
+    
+    <button class="equal" id="btnEqual">＝</button>
+  </div>
+
+  <div class="history-container">
+    <div class="history-title">計算履歴</div>
+    <ul class="history-list" id="historyList"></ul>
+  </div>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
