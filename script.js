@@ -3,6 +3,7 @@ let accumulatedValue = null;
 let pendingOperator = null;
 let isNewInput = false;
 let historyText = '';
+let expressionText = '';
 let isError = false;
 
 const mainDisplay = document.getElementById('mainDisplay');
@@ -83,22 +84,28 @@ function handleOperator(op) {
 
   if (accumulatedValue === null) {
     accumulatedValue = inputValue;
+    expressionText = `${currentInput}`;
   } else if (pendingOperator && !isNewInput) {
     const calcResult = calculate(accumulatedValue, inputValue, pendingOperator);
     const formatted = formatResult(calcResult);
     
     if (formatted === '桁数が多すぎます' || formatted === '0では割れません') {
       currentInput = formatted;
-      isError = true; // エラー状態を確定させる
+      isError = true;
       updateDisplay();
       return;
     }
+    // 途中計算の結果表示を行いながら、履歴用テキスト（expressionText）には元の入力を繋げて保持する
+    expressionText = `${expressionText} ${OPERATOR_SYMBOLS[pendingOperator]} ${currentInput}`;
     accumulatedValue = parseFloat(formatted);
     currentInput = formatted;
+  } else if (pendingOperator && isNewInput) {
+    // 演算子だけを連続で変更した場合の対応
+    expressionText = expressionText.substring(0, expressionText.lastIndexOf(' '));
   }
 
   pendingOperator = op;
-  historyText = `${accumulatedValue} ${OPERATOR_SYMBOLS[op]}`;
+  historyText = `${expressionText} ${OPERATOR_SYMBOLS[op]}`;
   isNewInput = true;
   updateDisplay();
 }
@@ -109,17 +116,21 @@ function handleEqual() {
   const inputValue = parseFloat(currentInput);
   const calcResult = calculate(accumulatedValue, inputValue, pendingOperator);
   const formattedResult = formatResult(calcResult);
-
-  const fullEquationText = `${historyText} ${inputValue} = ${formattedResult}`;
+  
+  // 最終的な式を作成（全過程をまとめた形）
+  const fullEquationText = `${expressionText} ${OPERATOR_SYMBOLS[pendingOperator]} ${currentInput} = ${formattedResult}`;
   
   if (formattedResult !== '0では割れません' && formattedResult !== '桁数が多すぎます') {
     addHistory(fullEquationText);
+  } else {
+    isError = true;
   }
 
   currentInput = formattedResult;
   accumulatedValue = null;
   pendingOperator = null;
   historyText = '';
+  expressionText = '';
   isNewInput = true;
   updateDisplay();
 }
@@ -129,6 +140,7 @@ function handleClear() {
   accumulatedValue = null;
   pendingOperator = null;
   historyText = '';
+  expressionText = '';
   isNewInput = false;
   isError = false;
   updateDisplay();
