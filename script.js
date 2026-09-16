@@ -1,4 +1,4 @@
-let currentInput = '0';
+let currentInput = '0'; 
 let accumulatedValue = null;
 let pendingOperator = null;
 let isNewInput = false;
@@ -17,7 +17,6 @@ function updateDisplay() {
   subDisplay.textContent = historyText;
 }
 
-// 数字入力桁数チェック（小数点は除外して12桁まで）
 function countDigits(str) {
   return str.replace(/[^0-9]/g, '').length;
 }
@@ -53,9 +52,9 @@ function calculate(a, b, op) {
     case '+': result = a + b; break;
     case '-': result = a - b; break;
     case '*': result = a * b; break;
-    case '/': 
+    case '/':
       if (b === 0) return '0では割れません';
-      result = a / b; 
+      result = a / b;
       break;
   }
   return result;
@@ -63,12 +62,10 @@ function calculate(a, b, op) {
 
 function formatResult(val) {
   if (typeof val === 'string') return val;
-  
-  // 小数第8位までで四捨五入して末尾の不要な0を削除
+
   let rounded = Number(Math.round(val + 'e8') + 'e-8');
   let str = rounded.toString();
-  
-  // 整数部分の桁数チェック
+
   let integerPart = str.split('.')[0].replace('-', '');
   if (integerPart.length > 12) {
     isError = true;
@@ -82,10 +79,16 @@ function handleOperator(op) {
 
   const inputValue = parseFloat(currentInput);
 
+  // ① 完全な初回（例: 1 を入力して * を押した時）
   if (accumulatedValue === null) {
     accumulatedValue = inputValue;
     expressionText = `${currentInput}`;
-  } else if (pendingOperator && !isNewInput) {
+    pendingOperator = op;
+    historyText = `${expressionText} ${OPERATOR_SYMBOLS[op]}`;
+    isNewInput = true;
+  } 
+  // ② 新しい数字を入力した後に演算子が押された時（例: 1 * のあとに 3 を入力して - を押した時）
+  else if (!isNewInput) {
     const calcResult = calculate(accumulatedValue, inputValue, pendingOperator);
     const formatted = formatResult(calcResult);
     
@@ -95,18 +98,23 @@ function handleOperator(op) {
       updateDisplay();
       return;
     }
-    // 途中計算の結果表示を行いながら、履歴用テキスト（expressionText）には元の入力を繋げて保持する
+    
+    // 式を更新して累積値を計算結果にする
     expressionText = `${expressionText} ${OPERATOR_SYMBOLS[pendingOperator]} ${currentInput}`;
     accumulatedValue = parseFloat(formatted);
-    currentInput = formatted;
-  } else if (pendingOperator && isNewInput) {
-    // 演算子だけを連続で変更した場合の対応
-    expressionText = expressionText.substring(0, expressionText.lastIndexOf(' '));
+    currentInput = formatted; // メイン表示用
+    
+    pendingOperator = op;
+    historyText = `${expressionText} ${OPERATOR_SYMBOLS[op]}`;
+    isNewInput = true;
+  } 
+  // ③ 数字を入力せずに演算子を連打・変更した時（isNewInput === true の時）
+  else {
+    // 式も累積値も一切いじらず、最後の演算子表記だけを付け替える
+    pendingOperator = op;
+    historyText = `${expressionText} ${OPERATOR_SYMBOLS[op]}`;
   }
 
-  pendingOperator = op;
-  historyText = `${expressionText} ${OPERATOR_SYMBOLS[op]}`;
-  isNewInput = true;
   updateDisplay();
 }
 
@@ -116,10 +124,9 @@ function handleEqual() {
   const inputValue = parseFloat(currentInput);
   const calcResult = calculate(accumulatedValue, inputValue, pendingOperator);
   const formattedResult = formatResult(calcResult);
-  
-  // 最終的な式を作成（全過程をまとめた形）
+
   const fullEquationText = `${expressionText} ${OPERATOR_SYMBOLS[pendingOperator]} ${currentInput} = ${formattedResult}`;
-  
+
   if (formattedResult !== '0では割れません' && formattedResult !== '桁数が多すぎます') {
     addHistory(fullEquationText);
   } else {
@@ -127,6 +134,7 @@ function handleEqual() {
   }
 
   currentInput = formattedResult;
+  // 計算完了後、結果を使って次の計算を始められるように準備
   accumulatedValue = null;
   pendingOperator = null;
   historyText = '';
@@ -152,7 +160,7 @@ function addHistory(itemText) {
   historyList.insertBefore(li, historyList.firstChild);
 }
 
-// イベントリスナーのセットアップ
+// イベントリスナー
 document.querySelectorAll('.num').forEach(btn => {
   btn.addEventListener('click', () => handleNumber(btn.textContent));
 });
@@ -165,7 +173,6 @@ document.getElementById('btnDecimal').addEventListener('click', handleDecimal);
 document.getElementById('btnEqual').addEventListener('click', handleEqual);
 document.getElementById('btnClear').addEventListener('click', handleClear);
 
-// キーボードイベント
 window.addEventListener('keydown', (e) => {
   if (e.key >= '0' && e.key <= '9') handleNumber(e.key);
   else if (e.key === '.') handleDecimal();
